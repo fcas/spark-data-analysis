@@ -1,2 +1,2 @@
 # spark-data-analysis
-Spark Streaming application topology to simple tweet sentiment analysis
+Spark Streaming application to simple tweet sentiment analysis
