@@ -54,7 +54,8 @@ public class SparkStreaming
 
         authentication();
 
-        SparkConf conf = new SparkConf().setMaster("spark://Felipes-MacBook-Air.local:7077").setAppName("SparkStreamingAnalysis");
+        // Cluster: spark://Felipes-MacBook-Air.local:7077
+        SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("SparkStreamingAnalysis");
         JavaStreamingContext javaStreamingContext = new JavaStreamingContext(conf, new Duration(30000));
         JavaReceiverInputDStream<Status> twitterDstream = TwitterUtils.createStream(javaStreamingContext, KeyWords.names());
 
@@ -170,8 +171,9 @@ public class SparkStreaming
         List<String> result = new ArrayList<>();
         try
         {
-            result = IOUtils.readLines(SparkStreaming.class.getResourceAsStream(filename), "UTF-8");
-        } catch (IOException e)
+            result = IOUtils.readLines(SparkStreaming.class.getClassLoader().getResourceAsStream(filename), "UTF-8");
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -183,25 +185,38 @@ public class SparkStreaming
         for (TweetInfo tweetStream : tweetStreams)
         {
             Document document = new Document();
-            document.put("_id", tweetStream.getId());
-            document.put("_sentiment", tweetStream.getSentiment());
-
-            List<String> _usersMention = new ArrayList<>();
-
-            for (UserMentionEntity userMention : tweetStream.getUsersMention())
+            try
             {
-                _usersMention.add(userMention.getScreenName());
+                document.put("_id", tweetStream.getId());
+                document.put("_sentiment", tweetStream.getSentiment());
+
+                List<String> _usersMention = new ArrayList<>();
+
+                for (UserMentionEntity userMention : tweetStream.getUsersMention())
+                {
+                    _usersMention.add(userMention.getScreenName());
+                }
+
+                document.put("_tweetText", tweetStream.getTweetText());
+                document.put("_tags", tweetStream.getTagsMap());
+
+                document.put("_userMentions", _usersMention);
+
+                if(_tweetsDAO == null)
+                {
+                    String collectionName = "spark_twitter_stream";
+                    _tweetsDAO = TweetsDAO.getInstance(collectionName, false);
+                }
+            }
+            catch (Exception e)
+            {
+
             }
 
-            document.put("_userMentions", _usersMention);
-
-            if(_tweetsDAO == null)
+            if(!document.isEmpty())
             {
-                String collectionName = "spark_twitter_stream";
-                _tweetsDAO = TweetsDAO.getInstance(collectionName, false);
+                _tweetsDAO.saveTweetInfo(document);
             }
-
-            _tweetsDAO.saveTweetInfo(document);
         }
     }
 
@@ -325,11 +340,11 @@ public class SparkStreaming
 
         double sentimentsScore = countSentimentsScore(positiveSentimentsCounter, negativeSentimentsCounter);
 
-        if (sentimentsScore > 0.5)
+        if (sentimentsScore > 0 && ((1 - sentimentsScore) > 0.5) || sentimentsScore == 1)
         {
             tweetStream.setSentiment(Sentiments.positive.name());
         }
-        else if (sentimentsScore != 0.0 && sentimentsScore < 0.5)
+        else if (sentimentsScore < 0)
         {
             tweetStream.setSentiment(Sentiments.negative.name());
         }

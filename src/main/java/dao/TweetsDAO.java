@@ -5,8 +5,6 @@ import com.mongodb.MongoClient;
 import org.bson.Document;
 import org.jongo.Jongo;
 
-import java.util.List;
-
 /**
  * Created by Felipe on 10/16/15.
  */
@@ -53,11 +51,6 @@ public class TweetsDAO
     public void saveTweetInfo(Document tweetInfo)
     {
         _jongo.getCollection(_collectionName).insert(tweetInfo);
-    }
-
-    public void saveStrings(List<String> strings)
-    {
-        _jongo.getCollection(_collectionName).insert(strings);
     }
 
     public void dropCollection()

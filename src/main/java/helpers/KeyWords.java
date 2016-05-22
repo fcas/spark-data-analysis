@@ -5,7 +5,33 @@ package helpers;
  */
 public enum KeyWords
 {
-    pecesiqueira, naosalvo, rafinhabastos, jovemnerd, mkarolqueiroz, felipenetoreal, belpesce, dilma, cunha;
+    PrefRioBranco,
+    PrefMaceio,
+    PrefMacapa,
+    PrefManaus,
+    Curitiba_PMC,
+    prefsp,
+    prefeitura_CBA,
+    Gov_DF,
+    prefeiturapmf,
+    VitoriaOnLine,
+    PrefeituradeGyn,
+    cgnoticias,
+    Prefeitura_POA,
+    scflorianopolis,
+    agecomsalvador,
+    PrefeituraSL,
+    prefeiturabh,
+    prefeiturabelem,
+    prefeitura_pvh,
+    PrefeituAracaju,
+    cidadepalmas,
+    prefeitura_the,
+    Prefeitura_Rio,
+    pmjponline,
+    prefrecife,
+    NatalPrefeitura,
+    PrefeituraBV;
 
     public static String[] names()
     {
