@@ -8,9 +8,9 @@ import org.jongo.Jongo;
 /**
  * Created by Felipe on 10/16/15.
  */
-public class TweetsDAO
+public class TweetsDAO implements ITweetsDAO
 {
-    private static TweetsDAO _instance;
+    private static ITweetsDAO _instance;
     private static boolean _dropCollection;
     private static String _collectionName;
     private DB _database;
@@ -38,7 +38,7 @@ public class TweetsDAO
         }
     }
 
-    public static TweetsDAO getInstance(String collectionName, boolean dropCollection)
+    public static ITweetsDAO getInstance(String collectionName, boolean dropCollection)
     {
         if(_instance == null)
         {

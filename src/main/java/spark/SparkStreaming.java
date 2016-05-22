@@ -1,5 +1,6 @@
 package spark;
 
+import dao.ITweetsDAO;
 import dao.TweetsDAO;
 import helpers.KeyWords;
 import helpers.TemporaryFilesMaker;
@@ -48,7 +49,7 @@ public class SparkStreaming
     private static ConcurrentHashMap<String, Integer> _sentimentMap;
     private static Tokenizer _tokenizer;
     private static POSTaggerME _tagger;
-    private static TweetsDAO _tweetsDAO;
+    private static ITweetsDAO _tweetsDAO;
 
     public static void main(String[] args) {
 
@@ -288,7 +289,9 @@ public class SparkStreaming
     {
         ConcurrentHashMap<String, String> hashMap = tweetStream.getTagsMap();
         Iterator<String> words = hashMap.keySet().iterator();
-        boolean hasNegativeAdverbs = hashMap.keySet().contains("não");
+        boolean hasNegativeAdverbs = hashMap.keySet().contains("não") || hashMap.keySet().contains("tampouco") ||
+                hashMap.keySet().contains("nunca") || hashMap.keySet().contains("nem") || hashMap.keySet().contains("jamais");
+
         int negativeSentimentsCounter = 0;
         int positiveSentimentsCounter = 0;
         while (words.hasNext())
